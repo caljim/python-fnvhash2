@@ -3,7 +3,7 @@
 
 static PyObject * fnvhash2_fnv_32a_str(PyObject *self, PyObject *args) {
   Fnv32_t fnv_32_res;
-  const char *need_to_hash;
+  char *need_to_hash;
   
   if(!PyArg_ParseTuple(args, "s", &need_to_hash))
     return NULL;
@@ -14,7 +14,7 @@ static PyObject * fnvhash2_fnv_32a_str(PyObject *self, PyObject *args) {
 
 static PyObject * fnvhash2_fnv_64a_str(PyObject *self, PyObject *args) {
   Fnv64_t fnv_64_res;
-  const char *need_to_hash;
+  char *need_to_hash;
   
   if(!PyArg_ParseTuple(args, "s", &need_to_hash))
     return NULL;
@@ -24,14 +24,37 @@ static PyObject * fnvhash2_fnv_64a_str(PyObject *self, PyObject *args) {
 }
 
 
-static PyMethodDef fnvhash_methods[] = {
+static PyMethodDef fnvhash2_methods[] = {
   {"fnv_32a_str", fnvhash2_fnv_32a_str, METH_VARARGS, "32bit hash function"},
   {"fnv_64a_str", fnvhash2_fnv_64a_str, METH_VARARGS, "64bit hash function"},
   {NULL, NULL, 0, NULL},
 };
 
-PyMODINIT_FUNC initfnvhash2() {
+#if PY_MAJOR_VERSION >= 3
+static struct PyModuleDef fnvhash2_moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "fnvhash2",
+        NULL,
+        0,
+        fnvhash2_methods,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+};
+#endif
+
+#if PY_MAJOR_VERSION >= 3
+PyObject * PyInit_fnvhash2(void) {
+#else
+PyMODINIT_FUNC initfnvhash2(void) {
+#endif
+#if PY_MAJOR_VERSION >= 3
+  return PyModule_Create(&fnvhash2_moduledef);
+#else
   PyObject *m;
-  m = Py_InitModule("fnvhash2", fnvhash_methods);
-  
+
+  m = Py_InitModule("fnvhash2", fnvhash2_methods);
+#endif
 }
+
